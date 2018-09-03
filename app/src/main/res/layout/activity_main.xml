@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.nagor.videoplayer.MainActivity">
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/zero"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/textsize_18"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/progress_bar"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:indeterminate="false"
+        android:focusable="false"
+        android:max="100"
+        android:focusableInTouchMode="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/end_time"
+        app:layout_constraintStart_toEndOf="@+id/start_time"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.82" />
+
+    <TextView
+        android:id="@+id/end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:text="@string/zero"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/textsize_18"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/progress_bar" />
+
+    <ImageView
+        android:id="@+id/rewind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/button_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:src="@android:drawable/ic_media_previous"
+        app:layout_constraintBottom_toBottomOf="@+id/play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/play_pause"
+        app:layout_constraintTop_toTopOf="@+id/play_pause" />
+
+    <ImageView
+        android:id="@+id/play_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/button_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:src="@android:drawable/ic_media_play"
+        app:layout_constraintEnd_toEndOf="@+id/progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/progress_bar"
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+    <ImageView
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="100dp"
+        android:background="@drawable/button_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:src="@android:drawable/ic_media_next"
+        app:layout_constraintBottom_toBottomOf="@+id/play_pause"
+        app:layout_constraintStart_toEndOf="@+id/play_pause"
+        app:layout_constraintTop_toTopOf="@+id/play_pause" />
+
+
+
+</android.support.constraint.ConstraintLayout>
