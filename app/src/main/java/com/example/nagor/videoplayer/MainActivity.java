@@ -26,7 +26,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ProgressBar progressBar;
 
-    ImageView playPause, next, previous;
+    ImageView playPause, next, previous, repeat;
+
+    private boolean isHandlerEnabled = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +46,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         previous = findViewById(R.id.rewind);
 
+        repeat = findViewById(R.id.repeat);
+
         next.setOnClickListener(this);
+
         playPause.setOnClickListener(this);
+
         previous.setOnClickListener(this);
+
+        repeat.setOnClickListener(this);
 
 
         mediaPlayer = new MediaPlayer();
@@ -64,16 +73,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
             mediaPlayer.start();
-            playPause.setImageResource(android.R.drawable.ic_media_pause);
+            playPause.setImageResource(R.drawable.pause);
             endTime.setText(AppUtils.formatTime(mediaPlayer.getDuration()));
             progressBar.setMax(mediaPlayer.getDuration());
-            startPlayBack();
+            startPlayBackHandler();
         }
     };
     MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-            playPause.setImageResource(android.R.drawable.ic_media_play);
+            playPause.setImageResource(R.drawable.play);
+            stopPlayBackHandler();
         }
     };
 
@@ -90,18 +100,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void startPlayBack() {
-        handler.post(runnable);
+    private void startPlayBackHandler() {
+        if (!isHandlerEnabled) {
+            handler.post(runnable);
+            isHandlerEnabled = true;
+        }
     }
+
+
+    private void stopPlayBackHandler() {
+        if (isHandlerEnabled) {
+            handler.removeCallbacks(runnable);
+            isHandlerEnabled = false;
+        }
+    }
+
 
     MediaPlayer.OnBufferingUpdateListener bufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
-            Log.e("Buffer List", " buff " + i);
+            int progress = (mediaPlayer.getDuration() * i) / 100;
+            Log.e("Buffer List", " buff " + i + " perc "+progress);
+            progressBar.setSecondaryProgress(progress);
         }
     };
 
 
+    MediaPlayer.OnInfoListener onInfoListener = new MediaPlayer.OnInfoListener() {
+        @Override
+        public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+            Log.e("Media OnInfo", " type " + i);
+            return false;
+        }
+    };
 
     SurfaceHolder.Callback callback = new SurfaceHolder.Callback() {
         @Override
@@ -128,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             mediaPlayer.setOnCompletionListener(onCompletionListener);
 
+            mediaPlayer.setOnInfoListener(onInfoListener);
+
             mediaPlayer.prepareAsync();
         }
 
@@ -147,22 +180,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.next:
-
+                startForward();
                 break;
 
             case R.id.play_pause:
-                if (mediaPlayer != null)
-                    if (mediaPlayer.isPlaying()) {
-                        mediaPlayer.pause();
-                        playPause.setImageResource(android.R.drawable.ic_media_play);
-                    } else {
-                        mediaPlayer.start();
-                        playPause.setImageResource(android.R.drawable.ic_media_pause);
-                    }
+                playPause();
+
                 break;
 
             case R.id.rewind:
+                startRewind();
                 break;
+
+            case R.id.repeat:
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isLooping()) {
+                        mediaPlayer.setLooping(false);
+                        repeat.setImageResource(R.drawable.repeat);
+                    } else {
+                        mediaPlayer.setLooping(true);
+                        repeat.setImageResource(R.drawable.repeat_enabled);
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mediaPlayer !=null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            playPause.setImageResource(R.drawable.play);
+        }
+    }
+
+    private void playPause() {
+        if (mediaPlayer != null)
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+                playPause.setImageResource(R.drawable.play);
+            } else {
+                mediaPlayer.start();
+                playPause.setImageResource(R.drawable.pause);
+            }
+    }
+
+    private void startRewind() {
+        if (mediaPlayer != null) {
+            int curDur = mediaPlayer.getCurrentPosition();
+            int seekPostion = curDur - 10000;
+            if (seekPostion <= 0) {
+                mediaPlayer.seekTo(0);
+            } else {
+                mediaPlayer.seekTo(seekPostion);
+            }
+        }
+    }
+
+    private void startForward() {
+        if (mediaPlayer != null) {
+            int curDur = mediaPlayer.getCurrentPosition();
+            int seekPostion = curDur + 10000;
+            if (seekPostion > mediaPlayer.getDuration()) {
+                if (mediaPlayer.isLooping()) {
+                    mediaPlayer.seekTo(0);
+                } else {
+                    mediaPlayer.seekTo(mediaPlayer.getDuration());
+                }
+            } else {
+                mediaPlayer.seekTo(seekPostion);
+            }
         }
     }
 }
