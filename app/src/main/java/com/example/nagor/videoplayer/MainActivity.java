@@ -208,11 +208,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onStop() {
-        super.onStop();
         if(mediaPlayer !=null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             playPause.setImageResource(R.drawable.play);
         }
+        super.onStop();
     }
 
     private void playPause() {
